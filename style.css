@@ -1,19 +1,14 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 50px;
 }
 
 h1 {
     color: #333;
 }
 
-button {
+#startButton {
     padding: 10px 20px;
     font-size: 16px;
-    margin: 10px;
-}
-
-#player {
-    margin: 20px auto;
 }
