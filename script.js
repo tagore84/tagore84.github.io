@@ -22,37 +22,37 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerReady(event) {
-    document.getElementById('startButton').addEventListener('click', () => {
+    const startButton = document.getElementById('startButton');
+    const recordButton = document.getElementById('recordButton');
+
+    startButton.addEventListener('click', () => {
         player.playVideo();
         startTime = Date.now();
         recording = true;
+        recordButton.disabled = false; // Habilitamos el botón para registrar pulsaciones
+    });
 
-        const keyDownHandler = (event) => {
-            if (recording) {
-                const timeElapsed = Date.now() - startTime;
-                keyPresses.push(timeElapsed);
-            }
-        };
-
-        document.addEventListener('keydown', keyDownHandler);
-
-        player.addEventListener('onStateChange', function(e) {
-            if (e.data == YT.PlayerState.ENDED) {
-                recording = false;
-                document.removeEventListener('keydown', keyDownHandler);
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(keyPresses));
-                const downloadAnchorNode = document.createElement('a');
-                downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", "resultados.json");
-                document.body.appendChild(downloadAnchorNode);
-                downloadAnchorNode.click();
-                downloadAnchorNode.remove();
-                alert("¡Gracias! Tus datos han sido registrados.");
-            }
-        });
+    recordButton.addEventListener('click', () => {
+        if (recording) {
+            const timeElapsed = Date.now() - startTime;
+            keyPresses.push(timeElapsed);
+        }
     });
 }
 
 function onPlayerStateChange(event) {
-    // Puedes manejar otros cambios de estado si es necesario
+    if (event.data == YT.PlayerState.ENDED) {
+        recording = false;
+        document.getElementById('recordButton').disabled = true; // Deshabilitamos el botón al terminar el video
+
+        // Generamos y descargamos el archivo JSON
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(keyPresses));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "resultados.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        alert("¡Gracias! Tus datos han sido registrados.");
+    }
 }
