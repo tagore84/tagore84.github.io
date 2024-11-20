@@ -1,1 +1,38 @@
-Hello World
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro de Pulsaciones</title>
+</head>
+<body>
+
+<audio id="audio" src="tu_audio.mp3"></audio>
+<button id="startButton">Iniciar</button>
+
+<script>
+let keyPresses = [];
+let startTime;
+
+document.getElementById('startButton').addEventListener('click', () => {
+    const audio = document.getElementById('audio');
+    audio.play();
+    startTime = Date.now();
+
+    document.addEventListener('keydown', (event) => {
+        const timeElapsed = Date.now() - startTime;
+        keyPresses.push(timeElapsed);
+    });
+
+    audio.onended = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(keyPresses));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "resultados.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    };
+});
+</script>
+
+</body>
+</html>
